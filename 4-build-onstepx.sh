@@ -12,3 +12,4 @@ arduino-cli compile \
         --export-binaries \
         --verbose \
         "./OnStepX"
+cp ~/.arduino*/packages/esp32/hardware/esp32/*/tools/partitions/boot_app0.bin ./OnStepX/build/*/

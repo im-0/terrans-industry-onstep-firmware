@@ -12,3 +12,4 @@ arduino-cli compile \
         --export-binaries \
         --verbose \
         "./SmartHandController"
+cp ~/.arduino*/packages/esp32/hardware/esp32/*/tools/partitions/boot_app0.bin ./SmartHandController/build/*/
