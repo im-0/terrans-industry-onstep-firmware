@@ -3,7 +3,7 @@
 ## Changes against upstream
 
 * Configuration for Terrans Industry Onstep V5 Pro for EXOS2/CG5/EQ5 mount
-* Fix for [a time synchronisation issue with Stellarium Mobile Plus](onstep.groups.io/g/main/topic/100216132)
+* Fix for [a time synchronisation issue with Stellarium Mobile Plus](https://onstep.groups.io/g/main/topic/100216132)
 
 ## How to flash
 
