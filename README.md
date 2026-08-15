@@ -53,3 +53,10 @@ sudo ./1-install-arduino-cli.sh
 # List firmware files
 ls -lh ./*/build/*/*.bin
 ```
+
+## Photos for reference
+
+| Device | Enclosure | PCB front | PCB back |
+| --- | --- | --- | --- |
+| OnStep GoTo controller | ![OnStep GoTo controller enclosure](README.files/goto-enclosure.jpg) | ![OnStep GoTo controller PCB front](README.files/goto-front.jpg) | ![OnStep GoTo controller PCB back](README.files/goto-back.jpg) |
+| Smart Hand Controller | ![Smart Hand Controller enclosure](README.files/shc-enclosure.jpg) | ![Smart Hand Controller PCB front](README.files/shc-front.jpg) | ![Smart Hand Controller PCB back](README.files/shc-back.jpg) |
