@@ -8,8 +8,8 @@ PORT=/dev/ttyUSB0
 # Terrans Industry Onstep Goto Controller V5 Pro: primary OnStepX firmware
 # Turn off, then set the switch to left position, turn on and connect USB Type-B cable
 esptool --chip esp32 --port "${PORT}" \
-        write_flash --erase-all \
-        --flash_mode dio --flash_freq 80m --flash_size 4MB \
+        write-flash --erase-all \
+        --flash-mode dio --flash-freq 80m --flash-size 4MB \
         0x1000 "./OnStepX/build/esp32.esp32.esp32/OnStepX.ino.bootloader.bin" \
         0x8000 "./OnStepX/build/esp32.esp32.esp32/OnStepX.ino.partitions.bin" \
         0xe000 "./OnStepX/build/esp32.esp32.esp32/boot_app0.bin" \
@@ -18,7 +18,7 @@ esptool --chip esp32 --port "${PORT}" \
 # Terrans Industry Onstep Goto Controller V5 Pro: WiFi and web interface
 # Turn off, then set the switch to right position, turn on and connect USB Type-B cable
 esptool --chip esp8266 --port "${PORT}" \
-        write_flash --erase-all \
+        write-flash --erase-all \
         0x0 "./SmartWebServer/build/esp8266.esp8266.d1/SmartWebServer.ino.bin"
 
 # Do not forget to set the switch back to center position!
@@ -26,8 +26,8 @@ esptool --chip esp8266 --port "${PORT}" \
 # Terrans Industry Smart Hand Controller (SHC)
 # Just connect USB Type-B cable to the SHC
 esptool --chip esp32 --port "${PORT}" \
-        write_flash --erase-all \
-        --flash_mode dio --flash_freq 80m --flash_size 4MB \
+        write-flash --erase-all \
+        --flash-mode dio --flash-freq 80m --flash-size 4MB \
         0x1000 "./SmartHandController/build/esp32.esp32.esp32/SmartHandController.ino.bootloader.bin" \
         0x8000 "./SmartHandController/build/esp32.esp32.esp32/SmartHandController.ino.partitions.bin" \
         0xe000 "./SmartHandController/build/esp32.esp32.esp32/boot_app0.bin" \
