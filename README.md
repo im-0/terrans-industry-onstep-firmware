@@ -1,4 +1,9 @@
-# Unofficial firmware update for Terrans Industry Onstep V5 Pro for EQ5 mount
+# Unofficial firmware update for Terrans Industry Onstep V5 Pro for EXOS2/CG5/EQ5 mount
+
+## Changes against upstream
+
+* Configuration for Terrans Industry Onstep V5 Pro for EXOS2/CG5/EQ5 mount
+* Fix for [a time synchronisation issue with Stellarium Mobile Plus](onstep.groups.io/g/main/topic/100216132)
 
 ## How to flash
 
