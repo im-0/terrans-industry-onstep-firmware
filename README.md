@@ -15,13 +15,13 @@ sudo ./1-install-arduino-cli.sh
 ./3-install-arduino-libs.sh
 
 # Terrans Industry Onstep Goto Controller V5 Pro: primary OnStepX firmware, tracking and Bluetooth
-4-build-onstepx.sh
+./4-build-onstepx.sh
 # Terrans Industry Onstep Goto Controller V5 Pro: WiFi and web interface
-6-build-smartwebserver.sh
+./6-build-smartwebserver.sh
 
 # Terrans Industry Smart Hand Controller (SHC)
-5-build-smarthandcontroller.sh
+./5-build-smarthandcontroller.sh
 
 # List firmware files
-ls -lh */build/*/*.ino.bin
+ls -lh ./*/build/*/*.ino.bin
 ```
