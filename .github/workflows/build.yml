@@ -1,0 +1,52 @@
+name: Build firmware
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Arduino CLI
+        run: ./1-install-arduino-cli.sh
+
+      - name: Install ESP toolchains
+        run: ./2-install-esp-toolchains.sh
+
+      - name: Install Arduino libraries
+        run: ./3-install-arduino-libs.sh
+
+      - name: Build OnStepX
+        run: ./4-build-onstepx.sh
+
+      - name: Build Smart Hand Controller
+        run: ./5-build-smarthandcontroller.sh
+
+      - name: Build Smart Web Server
+        run: ./6-build-smartwebserver.sh
+
+      - name: Create firmware archive
+        id: archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          GIT_COMMIT="${GITHUB_SHA}"
+          ARCHIVE_NAME="terrans-industry-v5-pro-eq5-$(date -u +%Y.%m.%d)-${GIT_COMMIT}.tar.xz"
+          tar --create --xz --file "${ARCHIVE_NAME}" -- */build
+          echo "name=${ARCHIVE_NAME}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload firmware archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.archive.outputs.name }}
+          path: ${{ steps.archive.outputs.name }}
+          if-no-files-found: error
+          compression-level: 0
