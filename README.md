@@ -7,6 +7,8 @@
 
 ## How to flash
 
+Flashing requires installed [esptool](https://github.com/espressif/esptool).
+
 ```bash
 PORT=/dev/ttyUSB0
 
@@ -58,6 +60,17 @@ esptool --chip esp32 --port "${PORT}" \
 # List firmware files
 ls -lh ./*/build/*/*.bin
 ```
+
+## How to fork and customize
+
+* Place any additional patches into [./OnStepX-changes/](OnStepX-changes/),
+  [./SmartHandController-changes/](SmartHandController-changes/) and
+  [./SmartWebServer-changes/](SmartWebServer-changes/). Patches are applied
+  before overwriting any files.
+* Place "file overrides" into [./OnStepX-changes/files/](OnStepX-changes/files/),
+  [./SmartHandController-changes/files/](SmartHandController-changes/files/) and
+  [./SmartWebServer-changes/files/](SmartWebServer-changes/files/). Files are
+  copied over recursively after applying patches.
 
 ## Photos for reference
 
