@@ -3,7 +3,7 @@
 set -x -e -u
 
 ARDUINO_CLI_VERSION="0.18.3"
-ARDUINO_CLI_DIR="/opt/arduino-cli"
+ARDUINO_CLI_DIR="${HOME}/.arduino-cli-bin"
 
 mkdir --parents --verbose "${ARDUINO_CLI_DIR}"
 

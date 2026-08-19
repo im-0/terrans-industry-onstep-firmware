@@ -43,7 +43,7 @@ esptool --chip esp32 --port "${PORT}" \
 
 ```bash
 # Install prerequisites
-sudo ./1-install-arduino-cli.sh
+./1-install-arduino-cli.sh
 ./2-install-esp-toolchains.sh
 ./3-install-arduino-libs.sh
 

@@ -2,7 +2,7 @@
 
 set -x -e -u
 
-ARDUINO_CLI_DIR="/opt/arduino-cli"
+ARDUINO_CLI_DIR="${HOME}/.arduino-cli-bin"
 
 export PATH="${ARDUINO_CLI_DIR}:${PATH}"
 

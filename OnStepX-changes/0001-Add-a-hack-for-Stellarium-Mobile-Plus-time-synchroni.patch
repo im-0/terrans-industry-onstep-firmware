@@ -1,0 +1,84 @@
+From 1e0f1bcb1a726550e9f9588bb371dc7f9f3d8b37 Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Sat, 15 Aug 2026 17:20:54 +0200
+Subject: [PATCH] Add a hack for Stellarium Mobile Plus time synchronisation
+
+Stellarium Mobile Plus for Android (paid app, includes telescope control
+features) shows "Time: incorrect" in red when connected to OnStepX over
+Blutooth even if automatic time sync is enabled in the app.
+
+App logs have a hint for a root cause:
+
+	...
+	#:SC08/15/26# => TRX timeout
+	Warning, started command with RX buffer not empty
+	discarding RX buffer content: 49
+	Could not set telescope time
+	...
+
+By trial and error I found that Stellarium waits for '#' after '1'.
+Probably this is for interoperability with other implementations of
+LX200 that send '#'-terminated strings after '1' on success.
+
+The fix is to simply send '1' as a string response in a case of
+a successful change of date.
+
+I tested this with:
+
+* Stellarium Mobile Plus (obviously)
+* SmartWebServer
+  Note that in a case of a daylight saving time and if time was previously
+  set by Stellarium Mobile Plus, it shows wrong UTC Offset (off by one)
+  but correct UT and LST. Seems fine. The only problem here is that
+  UTC Offset needs to be changed manually to be able to set new correct
+  date/time from the web interface.
+* SmartHandController
+* INDIGO 3
+
+Fixes: https://onstep.groups.io/g/main/topic/100216132
+---
+ docs/COMMAND_REFERENCE.md                 | 4 ++--
+ src/telescope/mount/site/Site.command.cpp | 6 +++++-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/docs/COMMAND_REFERENCE.md b/docs/COMMAND_REFERENCE.md
+index 409d15ee1eaa..edd58b00d6dc 100644
+--- a/docs/COMMAND_REFERENCE.md
++++ b/docs/COMMAND_REFERENCE.md
+@@ -159,8 +159,8 @@ That matters because some command names are reused by different subsystems, espe
+ | `:GX80#` | `HH:MM:SS.ss#` | UT1 time |
+ | `:GX81#` | `MM/DD/YY#` | UT1 date |
+ | `:GX89#` | `0` or `1` | Date/time ready status. `0` means ready, `1` means not ready. |
+-| `:SCMM/DD/YY#` | `0/1` | Set local date |
+-| `:SCMM/DD/YYYY#` | `0/1` | Set local date |
++| `:SCMM/DD/YY#` | `0` or `1#` | Set local date |
++| `:SCMM/DD/YYYY#` | `0` or `1#` | Set local date |
+ | `:SGsHH#` | `0/1` | Set UTC offset |
+ | `:SGsHH:MM#` | `0/1` | Set UTC offset. Comments indicate `MM` should be `00`, `30`, or `45`. |
+ | `:Sg(s)DDD*MM#` | `0/1` | Set longitude |
+diff --git a/src/telescope/mount/site/Site.command.cpp b/src/telescope/mount/site/Site.command.cpp
+index 5f915c773bd3..2a61605bcaf0 100644
+--- a/src/telescope/mount/site/Site.command.cpp
++++ b/src/telescope/mount/site/Site.command.cpp
+@@ -142,13 +142,17 @@ bool Site::command(char *reply, char *command, char *parameter, bool *suppressFr
+   if (command[0] == 'S') {
+     // :SC[MM/DD/YY]# or :SC[MM/DD/YYYY]#
+     //            Change local standard date
+-    //            Return: 0 on failure, 1 on success
++    //            Return: 0 on failure, 1# on success
+     if (command[1] == 'C') {
+       GregorianDate local = calendars.julianToGregorian(UT1ToLocal(getDateTime()));
+       if (strToDate(parameter, &local)) {
+         dateIsReady = true;
+         setDateTime(localToUT1(calendars.gregorianToJulian(local)));        
+         updateTLS();
++
++        // Stellarium Mobile Plus waits for a trailing '#'.
++        strcpy(reply, "1");
++        *numericReply = false;
+       } else *commandError = CE_PARAM_FORM;
+     } else
+ 
+-- 
+2.55.0
+
