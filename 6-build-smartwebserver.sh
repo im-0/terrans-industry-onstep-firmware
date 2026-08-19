@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -x -e -u
+set -x -e -u -o pipefail
 
 REPO_URL="https://github.com/hjd1964/SmartWebServer"
 # Date:   Tue Jul 21 11:38:54 2026
@@ -18,12 +18,14 @@ if [ ! -e "./SmartWebServer" ]; then
             --revision "${COMMIT}" \
             "${REPO_URL}" "./SmartWebServer"
 
-    ls -1 --sort "name" ./SmartWebServer-changes/*.patch | while read patch; do
-        set -x -e -u
+    if ls ./SmartWebServer-changes/*.patch >/dev/null 2>&1; then
+        ls -1 ./SmartWebServer-changes/*.patch | while read patch; do
+            set -x -e -u -o pipefail
 
-        patch="${PWD}/${patch}"
-        patch --directory "./SmartWebServer" --strip 1 <"${patch}"
-    done
+            patch="${PWD}/${patch}"
+            patch --directory "./SmartWebServer" --strip 1 <"${patch}"
+        done
+    fi
 
     [ -e "./SmartWebServer-changes/files" ] && cp \
             --force \

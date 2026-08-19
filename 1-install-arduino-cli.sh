@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -x -e -u
+set -x -e -u -o pipefail
 
 ARDUINO_CLI_VERSION="0.18.3"
 ARDUINO_CLI_DIR="${HOME}/.arduino-cli-bin"

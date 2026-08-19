@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -x -e -u
+set -x -e -u -o pipefail
 
 REPO_URL="https://github.com/hjd1964/OnStepX"
 # Date:   Fri Aug 7 11:07:40 2026
@@ -18,12 +18,14 @@ if [ ! -e "./OnStepX" ]; then
             --revision "${COMMIT}" \
             "${REPO_URL}" "./OnStepX"
 
-    ls -1 --sort "name" ./OnStepX-changes/*.patch | while read patch; do
-        set -x -e -u
+    if ls ./OnStepX-changes/*.patch >/dev/null 2>&1; then
+        ls -1 ./OnStepX-changes/*.patch | while read patch; do
+            set -x -e -u -o pipefail
 
-        patch="${PWD}/${patch}"
-        patch --directory "./OnStepX" --strip 1 <"${patch}"
-    done
+            patch="${PWD}/${patch}"
+            patch --directory "./OnStepX" --strip 1 <"${patch}"
+        done
+    fi
 
     [ -e "./OnStepX-changes/files" ] && cp \
             --force \

@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -x -e -u
+set -x -e -u -o pipefail
 
 ARDUINO_CLI_DIR="${HOME}/.arduino-cli-bin"
 
@@ -15,7 +15,7 @@ arduino-cli lib update-index
 # See https://onstep.groups.io/g/main/wiki/7152
 
 while read lib_name; do
-    set -x -e -u
+    set -x -e -u -o pipefail
 
     arduino-cli lib install "${lib_name}"
 done <<'EOF'
@@ -34,7 +34,7 @@ U8g2@2.36.19
 EOF
 
 while read lib_git; do
-    set -x -e -u
+    set -x -e -u -o pipefail
 
     arduino-cli lib install --git-url "${lib_git}"
 done <<'EOF'

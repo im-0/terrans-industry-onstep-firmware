@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -x -e -u
+set -x -e -u -o pipefail
 
 REPO_URL="https://github.com/hjd1964/SmartHandController"
 # Date:   Thu Jul 16 12:43:24 2026
@@ -18,12 +18,14 @@ if [ ! -e "./SmartHandController" ]; then
             --revision "${COMMIT}" \
             "${REPO_URL}" "./SmartHandController"
 
-    ls -1 --sort "name" ./SmartHandController-changes/*.patch | while read patch; do
-        set -x -e -u
+    if ls ./SmartHandController-changes/*.patch >/dev/null 2>&1; then
+        ls -1 ./SmartHandController-changes/*.patch | while read patch; do
+            set -x -e -u -o pipefail
 
-        patch="${PWD}/${patch}"
-        patch --directory "./SmartHandController" --strip 1 <"${patch}"
-    done
+            patch="${PWD}/${patch}"
+            patch --directory "./SmartHandController" --strip 1 <"${patch}"
+        done
+    fi
 
     [ -e "./SmartHandController-changes/files" ] && cp \
             --force \
