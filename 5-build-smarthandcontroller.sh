@@ -25,7 +25,7 @@ if [ ! -e "./SmartHandController" ]; then
         patch --directory "./SmartHandController" --strip 1 <"${patch}"
     done
 
-    cp \
+    [ -e "./SmartHandController-changes/files" ] && cp \
             --force \
             --recursive \
             --verbose \

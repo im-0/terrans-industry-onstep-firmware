@@ -25,7 +25,7 @@ if [ ! -e "./SmartWebServer" ]; then
         patch --directory "./SmartWebServer" --strip 1 <"${patch}"
     done
 
-    cp \
+    [ -e "./SmartWebServer-changes/files" ] && cp \
             --force \
             --recursive \
             --verbose \

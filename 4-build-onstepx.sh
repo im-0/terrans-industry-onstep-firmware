@@ -25,7 +25,7 @@ if [ ! -e "./OnStepX" ]; then
         patch --directory "./OnStepX" --strip 1 <"${patch}"
     done
 
-    cp \
+    [ -e "./OnStepX-changes/files" ] && cp \
             --force \
             --recursive \
             --verbose \
