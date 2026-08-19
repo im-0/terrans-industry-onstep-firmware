@@ -1,0 +1,31 @@
+ARG fedora_version=44
+
+FROM registry.fedoraproject.org/fedora:${fedora_version}
+
+COPY "1-install-arduino-cli.sh" "/usr/local/bin/1-install-arduino-cli.sh"
+COPY "2-install-esp-toolchains.sh" "/usr/local/bin/2-install-esp-toolchains.sh"
+COPY "3-install-arduino-libs.sh" "/usr/local/bin/3-install-arduino-libs.sh"
+
+RUN dnf --refresh upgrade --assumeyes
+
+RUN dnf \
+        install \
+        --assumeyes \
+        "git" \
+        "patch" \
+        "xz" \
+        "python3-pyserial"
+
+RUN "/usr/local/bin/1-install-arduino-cli.sh"
+RUN "/usr/local/bin/2-install-esp-toolchains.sh"
+RUN "/usr/local/bin/3-install-arduino-libs.sh"
+
+# Remove caches.
+RUN dnf clean all
+RUN rm -f /var/log/dnf5.log*
+
+RUN rm "/usr/local/bin/1-install-arduino-cli.sh"
+RUN rm "/usr/local/bin/2-install-esp-toolchains.sh"
+RUN rm "/usr/local/bin/3-install-arduino-libs.sh"
+
+CMD ["/bin/bash", "--login"]
