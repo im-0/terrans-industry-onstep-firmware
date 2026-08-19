@@ -24,13 +24,13 @@ jobs:
       - name: Install Arduino libraries
         run: ./3-install-arduino-libs.sh
 
-      - name: Build OnStepX
+      - name: Build OnStepX firmware
         run: ./4-build-onstepx.sh
 
-      - name: Build Smart Hand Controller
+      - name: Build SmartHandController firmware
         run: ./5-build-smarthandcontroller.sh
 
-      - name: Build Smart Web Server
+      - name: Build SmartWebServer firmware
         run: ./6-build-smartwebserver.sh
 
       - name: Create firmware archive
