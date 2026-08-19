@@ -1,0 +1,25 @@
+From f233b0b5f385be274d5c73065edc4d854df93fbc Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Wed, 19 Aug 2026 22:47:00 +0200
+Subject: [PATCH 2/3] Add a space between "OnStep" and version string
+
+---
+ src/pages/Page.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pages/Page.cpp b/src/pages/Page.cpp
+index 08d702807d1d..1c47850e5a96 100644
+--- a/src/pages/Page.cpp
++++ b/src/pages/Page.cpp
+@@ -13,7 +13,7 @@ void pageHeader(int selected) {
+   if (strlen(status.configName) > 0) data.concat(status.configName); else data.concat(F("OnStep"));
+   data.concat(FPSTR(html_onstep_header_title));
+   data.concat(firmwareVersion.str);
+-  data.concat(F(" (OnStep"));
++  data.concat(F(" (OnStep "));
+   if (status.getVersionStr(temp)) data.concat(temp); else data.concat("?");
+   www.sendContentAndClear(data);
+ 
+-- 
+2.55.0
+

@@ -1,0 +1,27 @@
+From a11174064ecad9c8419e130f8e5db4a090f60de5 Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Wed, 19 Aug 2026 22:43:35 +0200
+Subject: [PATCH 1/3] Replace "%%" with single '%' in
+ `html_onstep_header_begin`
+
+This string is not formatted
+---
+ src/pages/Page.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pages/Page.h b/src/pages/Page.h
+index 83ccf757539a..0c2f51af73ad 100644
+--- a/src/pages/Page.h
++++ b/src/pages/Page.h
+@@ -15,7 +15,7 @@
+ 
+ void pageHeader(int selected);
+ 
+-const char html_onstep_header_begin[] PROGMEM = "<div class='t'><table width='100%%'><tr><td><b><font size='5'>";
++const char html_onstep_header_begin[] PROGMEM = "<div class='t'><table width='100%'><tr><td><b><font size='5'>";
+ const char html_onstep_header_title[] PROGMEM = "</font></b></td><td align='right'><b>Smart Web Server ";
+ const char html_onstep_header_links[] PROGMEM = ")</b></td></tr></table>";
+ const char html_onstep_header_end[] PROGMEM = "</div>\n";
+-- 
+2.55.0
+
