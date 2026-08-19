@@ -37,14 +37,20 @@ jobs:
         run: |
           set -euo pipefail
           GIT_COMMIT="${GITHUB_SHA}"
-          ARCHIVE_NAME="terrans-industry-v5-pro-eq5-$(date -u +%Y.%m.%d)-${GIT_COMMIT}.tar.xz"
-          tar --create --xz --file "${ARCHIVE_NAME}" -- */build
-          echo "name=${ARCHIVE_NAME}" >> "${GITHUB_OUTPUT}"
+          ARCHIVE_NAME="terrans-industry-v5-pro-eq5-$( date -u +%Y.%m.%d )-${GIT_COMMIT}"
+          tar \
+                  --create \
+                  --xz \
+                  --file "${ARCHIVE_NAME}.tar.xz" \
+                  --transform "s,^,${ARCHIVE_NAME}/," \
+                  -- \
+                  "./OnStepX/build" "./SmartHandController/build" "./SmartWebServer/build"
+          echo "name=${ARCHIVE_NAME}.tar.xz" >>"${GITHUB_OUTPUT}"
 
       - name: Upload firmware archive
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: ${{ steps.archive.outputs.name }}
-          path: ${{ steps.archive.outputs.name }}
-          if-no-files-found: error
-          compression-level: 0
+          name: '${{ steps.archive.outputs.name }}'
+          path: '${{ steps.archive.outputs.name }}'
+          if-no-files-found: 'error'
+          archive: 'false'
