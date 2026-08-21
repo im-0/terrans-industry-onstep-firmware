@@ -1,0 +1,162 @@
+From dff1d548bcc389a53e93d66a23b9a80ffb25ec28 Mon Sep 17 00:00:00 2001
+From: Cameron Tetford <cameron.tetford+github@gmail.com>
+Date: Tue, 18 Aug 2026 08:02:21 -0400
+Subject: [PATCH 4/4] Added WiFi STA fallback recovery
+
+New STA recovery option:
+- If the station SSID isn't found at boot and the system falls back to AP mode, it scans for the station SSID and switches back to station mode once it appears.
+- The AP is only dropped after the station actually connects.
+---
+ src/Config.defaults.h               |  4 +++
+ src/lib/wifi/WifiManager.cpp        | 44 ++++++++++++++++++++++++++++-
+ src/lib/wifi/WifiManager.defaults.h |  8 ++++++
+ src/lib/wifi/WifiManager.h          | 12 ++++++++
+ 4 files changed, 67 insertions(+), 1 deletion(-)
+
+diff --git a/src/Config.defaults.h b/src/Config.defaults.h
+index ea52205f56a1..d1f9f4252289 100644
+--- a/src/Config.defaults.h
++++ b/src/Config.defaults.h
+@@ -72,6 +72,10 @@
+ #define STA_AUTO_RECONNECT             true      // automatically reconnect if connection is dropped
+ #endif
+ 
++#ifndef STA_AP_FALLBACK_RECONNECT
++#define STA_AP_FALLBACK_RECONNECT      false     // while in fallback SoftAP mode periodically scan for the
++#endif                                           // station SSID and switch back to station mode if found
++
+ // onstep reset control related
+ #ifndef RESET_PIN
+ #define RESET_PIN                      OFF
+diff --git a/src/lib/wifi/WifiManager.cpp b/src/lib/wifi/WifiManager.cpp
+index 96834e9343fe..7047c29bf92f 100644
+--- a/src/lib/wifi/WifiManager.cpp
++++ b/src/lib/wifi/WifiManager.cpp
+@@ -92,6 +92,10 @@ bool WifiManager::init() {
+         VLF("MSG: WiFi, switching to SoftAP mode");
+         settings.stationEnabled = false;
+         settings.accessPointEnabled = true;
++        #if STA_AP_FALLBACK_RECONNECT == true
++          staFallbackActive = true;
++          fallbackApOnly = true;
++        #endif
+         goto TryAgain;
+       }
+ 
+@@ -147,7 +151,7 @@ bool WifiManager::init() {
+       }
+ 
+       #if STA_AUTO_RECONNECT == true
+-        if (settings.stationEnabled) {
++        if (settings.stationEnabled || staFallbackActive) {
+           VF("MSG: WiFi, start connection check task (rate 8s priority 7)... ");
+           if (tasks.add(8000, 0, true, 7, reconnectStationWrapper, "WifiChk")) { VLF("success"); } else { VLF("FAILED!"); }
+         }
+@@ -161,10 +165,47 @@ bool WifiManager::init() {
+ #if STA_AUTO_RECONNECT == true
+   void WifiManager::reconnectStation() {
+     if (WiFi.status() != WL_CONNECTED) {
++      #if STA_AP_FALLBACK_RECONNECT == true
++        // in fallback mode wait for a scan to show the station SSID before attempting to reconnect
++        if (staFallbackActive) {
++          int networks = WiFi.scanComplete();
++          if (networks == WIFI_SCAN_RUNNING) return;
++
++          bool found = false;
++          for (int i = 0; i < networks; i++) if (strcmp(WiFi.SSID(i).c_str(), sta->ssid) == 0) { found = true; break; }
++          if (networks >= 0) WiFi.scanDelete();
++
++          if (!found) {
++            // start an async scan for a later pass, keeping the AP active
++            if ((long)(fallbackScanTimeMs - millis()) < 0) {
++              fallbackScanTimeMs = millis() + STA_AP_FALLBACK_RECONNECT_RATE*1000UL;
++              WiFi.mode(WIFI_AP_STA);
++              WiFi.scanNetworks(true);
++            }
++            return;
++          }
++          VF("MSG: WiFi, station SSID "); V(sta->ssid); VLF(" found");
++        }
++      #endif
++
+       VLF("MSG: WiFi, attempting reconnect");
+       WiFi.disconnect();
+       WiFi.reconnect();
+     }
++    #if STA_AP_FALLBACK_RECONNECT == true
++      // the station connected, restore normal station operation
++      else if (staFallbackActive) {
++        VLF("MSG: WiFi, station connected, leaving fallback mode");
++        staFallbackActive = false;
++        settings.stationEnabled = true;
++        if (fallbackApOnly) {
++          VLF("MSG: WiFi, stopping fallback SoftAP");
++          WiFi.softAPdisconnect(true);
++          WiFi.mode(WIFI_STA);
++          settings.accessPointEnabled = false;
++        }
++      }
++    #endif
+   }
+ #endif
+ 
+@@ -175,6 +216,7 @@ void WifiManager::setStation(int number) {
+ }
+ 
+ void WifiManager::disconnect() {
++  staFallbackActive = false;
+   WiFi.disconnect();
+   WiFi.softAPdisconnect(true);
+   active = false;
+diff --git a/src/lib/wifi/WifiManager.defaults.h b/src/lib/wifi/WifiManager.defaults.h
+index 9f7332fde150..f01f27ea557c 100644
+--- a/src/lib/wifi/WifiManager.defaults.h
++++ b/src/lib/wifi/WifiManager.defaults.h
+@@ -96,6 +96,14 @@
+ #define STA_AUTO_RECONNECT          false // normally not enabled
+ #endif
+ 
++#ifndef STA_AP_FALLBACK_RECONNECT
++#define STA_AP_FALLBACK_RECONNECT   false // scan for the station SSID while in fallback AP mode, switch back if found
++#endif
++
++#ifndef STA_AP_FALLBACK_RECONNECT_RATE
++#define STA_AP_FALLBACK_RECONNECT_RATE 60 // seconds between station SSID scans while in fallback AP mode
++#endif
++
+ #ifndef STA_SSID
+ #define STA_SSID                    "Home" // Wifi Station SSID to connnect to
+ #endif
+diff --git a/src/lib/wifi/WifiManager.h b/src/lib/wifi/WifiManager.h
+index 6eaccae33bce..1e434052c34e 100644
+--- a/src/lib/wifi/WifiManager.h
++++ b/src/lib/wifi/WifiManager.h
+@@ -31,6 +31,10 @@
+   #define WifiStationCount 1
+ #endif
+ 
++#if STA_AP_FALLBACK_RECONNECT == true && STA_AUTO_RECONNECT != true
++  #error "Configuration (Config.h): STA_AP_FALLBACK_RECONNECT requires STA_AUTO_RECONNECT"
++#endif
++
+ #pragma pack(1)
+ 
+ #define WifiStationPasswordSize 64
+@@ -124,6 +128,14 @@ class WifiManager {
+   private:
+     bool settingsReady = false;
+ 
++    // true while running in AP mode with the station unable to connect
++    bool staFallbackActive = false;
++
++    // true if the AP is only active due to fallback and should stop once the station connects
++    bool fallbackApOnly = false;
++
++    unsigned long fallbackScanTimeMs = 0;
++
+     StationPassword stationPassword[WifiStationCount] =
+     {
+       #if WifiStationCount > 0
+-- 
+2.55.0
+

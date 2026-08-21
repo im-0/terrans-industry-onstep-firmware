@@ -1,7 +1,7 @@
 From e8b686d369bdac1805f53dfe35726d7cc9e0ef4c Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Wed, 19 Aug 2026 22:50:48 +0200
-Subject: [PATCH 3/3] Add mobile browser support
+Subject: [PATCH 3/4] Add mobile browser support
 
 This adds CSS overrides for narrow screens. Appearance in desktop
 browsers is unchanged (unless you squeeze browser window too much).
