@@ -8,7 +8,11 @@
 
 ## How to flash
 
-Flashing requires installed [esptool](https://github.com/espressif/esptool).
+Flashing requires one of the official Espressif tools:
+
+* For Linux, macOS, Windows: command-line [esptool](https://github.com/espressif/esptool).
+* Or Windows-only
+  [Espressif Flash Download Tool](https://docs.espressif.com/projects/esp-test-tools/en/latest/esp32/production_stage/tools/flash_download_tool.html).
 
 ```bash
 PORT=/dev/ttyUSB0
