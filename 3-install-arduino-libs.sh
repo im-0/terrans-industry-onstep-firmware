@@ -13,6 +13,7 @@ arduino-cli lib update-index
 
 # See https://onstep.groups.io/g/main/wiki/32776
 # See https://onstep.groups.io/g/main/wiki/7152
+# See https://github.com/hjd1964/OnStepX-Plugins
 
 while read lib_name; do
     set -x -e -u -o pipefail
@@ -31,6 +32,8 @@ TCA9555@0.4.4
 Adafruit MCP23017 Arduino Library@2.3.2
 EspSoftwareSerial@8.1.0
 U8g2@2.36.19
+NimBLE-Arduino@1.4.3
+ElegantOTA@3.1.7
 EOF
 
 git_checkout_tmp=$( mktemp --directory --tmpdir "install-arduino-libs.tmp.XXXXXXXXXX" )
