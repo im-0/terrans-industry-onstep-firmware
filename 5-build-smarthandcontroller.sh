@@ -12,6 +12,11 @@ ARDUINO_CLI_DIR="${HOME}/.arduino-cli-bin"
 
 export PATH="${ARDUINO_CLI_DIR}:${PATH}"
 
+export GIT_AUTHOR_NAME="Builder"
+export GIT_AUTHOR_EMAIL="builder@builder"
+export GIT_COMMITTER_NAME="${GIT_AUTHOR_NAME}"
+export GIT_COMMITTER_EMAIL="${GIT_AUTHOR_EMAIL}"
+
 if [ ! -e "./SmartHandController" ]; then
     git clone \
             --depth 1 \
@@ -24,6 +29,9 @@ if [ ! -e "./SmartHandController" ]; then
 
             patch="${PWD}/${patch}"
             patch --directory "./SmartHandController" --strip 1 <"${patch}"
+
+            git -C "./SmartHandController" add "."
+            git -C "./SmartHandController" commit -m "patch ${patch} applied"
         done
     fi
 
@@ -32,6 +40,8 @@ if [ ! -e "./SmartHandController" ]; then
             --recursive \
             --verbose \
             "./SmartHandController-changes/files/." "./SmartHandController"
+    git -C "./SmartHandController" add "."
+    git -C "./SmartHandController" commit -m "file overrides applied"
 fi
 
 arduino-cli compile \

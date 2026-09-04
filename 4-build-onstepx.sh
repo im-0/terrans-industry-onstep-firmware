@@ -12,6 +12,11 @@ ARDUINO_CLI_DIR="${HOME}/.arduino-cli-bin"
 
 export PATH="${ARDUINO_CLI_DIR}:${PATH}"
 
+export GIT_AUTHOR_NAME="Builder"
+export GIT_AUTHOR_EMAIL="builder@builder"
+export GIT_COMMITTER_NAME="${GIT_AUTHOR_NAME}"
+export GIT_COMMITTER_EMAIL="${GIT_AUTHOR_EMAIL}"
+
 if [ ! -e "./OnStepX" ]; then
     git clone \
             --depth 1 \
@@ -24,6 +29,9 @@ if [ ! -e "./OnStepX" ]; then
 
             patch="${PWD}/${patch}"
             patch --directory "./OnStepX" --strip 1 <"${patch}"
+
+            git -C "./OnStepX" add "."
+            git -C "./OnStepX" commit -m "patch ${patch} applied"
         done
     fi
 
@@ -32,6 +40,8 @@ if [ ! -e "./OnStepX" ]; then
             --recursive \
             --verbose \
             "./OnStepX-changes/files/." "./OnStepX"
+    git -C "./OnStepX" add "."
+    git -C "./OnStepX" commit -m "file overrides applied"
 fi
 
 arduino-cli compile \

@@ -12,6 +12,11 @@ ARDUINO_CLI_DIR="${HOME}/.arduino-cli-bin"
 
 export PATH="${ARDUINO_CLI_DIR}:${PATH}"
 
+export GIT_AUTHOR_NAME="Builder"
+export GIT_AUTHOR_EMAIL="builder@builder"
+export GIT_COMMITTER_NAME="${GIT_AUTHOR_NAME}"
+export GIT_COMMITTER_EMAIL="${GIT_AUTHOR_EMAIL}"
+
 if [ ! -e "./SmartWebServer" ]; then
     git clone \
             --depth 1 \
@@ -24,6 +29,9 @@ if [ ! -e "./SmartWebServer" ]; then
 
             patch="${PWD}/${patch}"
             patch --directory "./SmartWebServer" --strip 1 <"${patch}"
+
+            git -C "./SmartWebServer" add "."
+            git -C "./SmartWebServer" commit -m "patch ${patch} applied"
         done
     fi
 
@@ -32,6 +40,8 @@ if [ ! -e "./SmartWebServer" ]; then
             --recursive \
             --verbose \
             "./SmartWebServer-changes/files/." "./SmartWebServer"
+    git -C "./SmartWebServer" add "."
+    git -C "./SmartWebServer" commit -m "file overrides applied"
 fi
 
 arduino-cli compile \
