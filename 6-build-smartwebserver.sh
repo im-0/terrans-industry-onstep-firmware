@@ -6,7 +6,7 @@ REPO_URL="https://github.com/hjd1964/SmartWebServer"
 # Date:   Tue Jul 21 11:38:54 2026
 COMMIT="193a81809f5b19b3afa2a8c58f18291c2f0b0475"
 
-FQBN="esp8266:esp8266:d1:xtal=80,vt=flash,exception=disabled,ssl=all,eesz=4M3M,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=921600"
+FQBN="esp8266:esp8266:d1:xtal=80,vt=flash,exception=disabled,ssl=all,eesz=4M3M,ip=hb2f,dbg=Disabled,lvl=None____,wipe=none,baud=921600"
 
 ARDUINO_CLI_DIR="${HOME}/.arduino-cli-bin"
 
