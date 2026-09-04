@@ -1,0 +1,29 @@
+From a592abdda7761d42b3bd83d5e6c738c0ab209f84 Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Fri, 4 Sep 2026 23:54:12 +0200
+Subject: [PATCH 5/5] Fix WiFi STA reconnection
+
+WiFi.disconnect() clears the current station SSID and password.
+WiFi.reconnect() then tries to connect with an empty configuration.
+---
+ src/lib/wifi/WifiManager.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/lib/wifi/WifiManager.cpp b/src/lib/wifi/WifiManager.cpp
+index 7047c29bf92f..3fea6b1a2bac 100644
+--- a/src/lib/wifi/WifiManager.cpp
++++ b/src/lib/wifi/WifiManager.cpp
+@@ -189,8 +189,8 @@ bool WifiManager::init() {
+       #endif
+ 
+       VLF("MSG: WiFi, attempting reconnect");
+-      WiFi.disconnect();
+-      WiFi.reconnect();
++      // Try to reconnect using the same SSID and password.
++      WiFi.begin(sta->ssid, staPwd->password);
+     }
+     #if STA_AP_FALLBACK_RECONNECT == true
+       // the station connected, restore normal station operation
+-- 
+2.55.0
+

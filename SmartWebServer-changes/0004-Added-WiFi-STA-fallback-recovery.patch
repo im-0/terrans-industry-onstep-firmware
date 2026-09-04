@@ -1,7 +1,7 @@
 From dff1d548bcc389a53e93d66a23b9a80ffb25ec28 Mon Sep 17 00:00:00 2001
 From: Cameron Tetford <cameron.tetford+github@gmail.com>
 Date: Tue, 18 Aug 2026 08:02:21 -0400
-Subject: [PATCH 4/4] Added WiFi STA fallback recovery
+Subject: [PATCH 4/5] Added WiFi STA fallback recovery
 
 New STA recovery option:
 - If the station SSID isn't found at boot and the system falls back to AP mode, it scans for the station SSID and switches back to station mode once it appears.

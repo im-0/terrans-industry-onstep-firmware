@@ -1,7 +1,7 @@
 From f233b0b5f385be274d5c73065edc4d854df93fbc Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Wed, 19 Aug 2026 22:47:00 +0200
-Subject: [PATCH 2/4] Add a space between "OnStep" and version string
+Subject: [PATCH 2/5] Add a space between "OnStep" and version string
 
 ---
  src/pages/Page.cpp | 2 +-
