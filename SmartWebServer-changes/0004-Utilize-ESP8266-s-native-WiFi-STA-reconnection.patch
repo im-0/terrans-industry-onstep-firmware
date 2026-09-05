@@ -1,0 +1,89 @@
+From d60b766d8a1f1699bc387b451a2fa0894e851e6f Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Sat, 5 Sep 2026 04:08:47 +0200
+Subject: [PATCH 4/4] Utilize ESP8266's native WiFi STA reconnection
+
+I hope this will keep reconnecting indefinitely when WiFi STA mode is
+enabled.
+---
+ src/lib/wifi/WifiManager.cpp | 26 ++++----------------------
+ src/lib/wifi/WifiManager.h   |  4 ----
+ 2 files changed, 4 insertions(+), 26 deletions(-)
+
+diff --git a/src/lib/wifi/WifiManager.cpp b/src/lib/wifi/WifiManager.cpp
+index 96834e9343fe..c69f237a5479 100644
+--- a/src/lib/wifi/WifiManager.cpp
++++ b/src/lib/wifi/WifiManager.cpp
+@@ -3,13 +3,8 @@
+ 
+ #if OPERATIONAL_MODE == WIFI
+ 
+-#include "../tasks/OnTask.h"
+ #include "../nv/Nv.h"
+ 
+-#if STA_AUTO_RECONNECT == true
+-  void reconnectStationWrapper() { wifiManager.reconnectStation(); }
+-#endif
+-
+ bool WifiManager::init() {
+   if (!active) {
+ 
+@@ -65,6 +60,10 @@ bool WifiManager::init() {
+       WiFi.mode(WIFI_AP_STA);
+     }
+ 
++    #if STA_AUTO_RECONNECT == true
++      if (settings.stationEnabled) WiFi.setAutoReconnect(true);
++    #endif
++
+     // Keep command links responsive; ESP cores may enable modem sleep by default.
+     #if defined(ESP32)
+       WiFi.setSleep(false);
+@@ -145,29 +144,12 @@ bool WifiManager::init() {
+           VF("MSG: WiFi, using gateway as target "); VL(IPAddress(wifiManager.sta->target).toString().c_str());
+         }
+       }
+-
+-      #if STA_AUTO_RECONNECT == true
+-        if (settings.stationEnabled) {
+-          VF("MSG: WiFi, start connection check task (rate 8s priority 7)... ");
+-          if (tasks.add(8000, 0, true, 7, reconnectStationWrapper, "WifiChk")) { VLF("success"); } else { VLF("FAILED!"); }
+-        }
+-      #endif
+     }
+   }
+ 
+   return active;
+ }
+ 
+-#if STA_AUTO_RECONNECT == true
+-  void WifiManager::reconnectStation() {
+-    if (WiFi.status() != WL_CONNECTED) {
+-      VLF("MSG: WiFi, attempting reconnect");
+-      WiFi.disconnect();
+-      WiFi.reconnect();
+-    }
+-  }
+-#endif
+-
+ void WifiManager::setStation(int number) {
+   if (number >= 1 && number <= WifiStationCount) stationNumber = number;
+   sta = &station[stationNumber - 1];
+diff --git a/src/lib/wifi/WifiManager.h b/src/lib/wifi/WifiManager.h
+index 6eaccae33bce..90671bf5aec7 100644
+--- a/src/lib/wifi/WifiManager.h
++++ b/src/lib/wifi/WifiManager.h
+@@ -79,10 +79,6 @@ class WifiManager {
+     // stops WiFi
+     void disconnect();
+ 
+-    #if STA_AUTO_RECONNECT == true
+-      void reconnectStation();
+-    #endif
+-
+     // set the currently active station
+     // \param number from 1 to WifiStationCount
+     void setStation(int number);
+-- 
+2.55.0
+
