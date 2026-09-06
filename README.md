@@ -5,8 +5,7 @@
 * Configuration for Terrans Industry Onstep V5 Pro for EXOS2/CG5/EQ5 mount
 * Fix for [a time synchronisation issue with Stellarium Mobile Plus](https://onstep.groups.io/g/main/topic/100216132) ([upstream PR](https://github.com/hjd1964/OnStepX/pull/125))
 * Fix for mobile browsers for `SmartWebServer` ([upstream PR](https://github.com/hjd1964/SmartWebServer/pull/39))
-* WiFi STA fallback recovery for `SmartWebServer` based on patch by
-  [Cameron Tetford](https://github.com/CTetford) ([commit](https://github.com/CTetford/SmartWebServer/commit/bb78eb6a2455771059eb4ba45ecc4230f090974e))
+* More reliable WiFi STA reconnection ([upstream PR](https://github.com/hjd1964/SmartWebServer/pull/41))
 
 ## How to flash
 
