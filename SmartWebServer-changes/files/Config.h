@@ -80,10 +80,6 @@
 #define AXIS2_ENCODER_DIFF_LIMIT_FROM OFF //    OFF, n, (arcsec.) Maximum diff. between encoder/OnStep for sync. from OnStep. Adjust
                                           //         for absolute encoders.
 
-// CUSTOM --------------------------------------------------------------------------------------------------------------------------
-#define STA_AP_FALLBACK_RECONNECT    true // while in fallback SoftAP mode periodically scan for the
-                                          // station SSID and switch back to station mode if found
-
 // THAT'S IT FOR USER CONFIGURATION!
 // -------------------------------------------------------------------------------
 #include "Extended.config.h"
