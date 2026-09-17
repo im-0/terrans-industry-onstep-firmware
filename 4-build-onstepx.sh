@@ -3,8 +3,8 @@
 set -x -e -u -o pipefail
 
 REPO_URL="https://github.com/hjd1964/OnStepX"
-# Date:   Fri Aug 7 11:07:40 2026
-COMMIT="d4874283ab74e390329b007f253595138e617752"
+# Date:   Tue Sep 8 08:45:02 2026
+COMMIT="65a751825677a03a0b12b15546780b614a206435"
 
 FQBN="esp32:esp32:esp32:CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=huge_app,PSRAM=disabled,LoopCore=1,EventsCore=1,DebugLevel=none,EraseFlash=none"
 
